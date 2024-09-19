@@ -18,6 +18,18 @@ export default async function handler(request, response) {
       return;
     }
 
+    if (request.method === "PUT") {
+      const updatedJoke = request.body;
+
+      console.log(updatedJoke);
+      console.log(jokeId);
+
+      await Joke.findByIdAndUpdate(jokeId, updatedJoke);
+
+      response.status(200).json({ message: "success" });
+      return;
+    }
+
     if (request.method === "DELETE") {
       await Joke.findByIdAndDelete(jokeId);
 
