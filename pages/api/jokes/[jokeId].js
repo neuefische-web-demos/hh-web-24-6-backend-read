@@ -1,5 +1,4 @@
 import dbConnect from "@/db/connect.js";
-import { jokes } from "../../../lib/data.js";
 import Joke from "@/db/models/Joke.js";
 
 export default async function handler(request, response) {
@@ -7,14 +6,24 @@ export default async function handler(request, response) {
   await dbConnect();
 
   try {
-    const joke = await Joke.findById(jokeId);
+    if (request.method === "GET") {
+      const joke = await Joke.findById(jokeId);
 
-    if (!joke) {
-      response.status(404).json({ status: "Not Found" });
+      if (!joke) {
+        response.status(404).json({ status: "Not Found" });
+        return;
+      }
+
+      response.status(200).json(joke);
       return;
     }
 
-    response.status(200).json(joke);
+    if (request.method === "DELETE") {
+      await Joke.findByIdAndDelete(jokeId);
+
+      response.status(200).json({ message: "Success" });
+      return;
+    }
   } catch (error) {
     console.log(error);
 
